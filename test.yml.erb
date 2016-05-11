@@ -1,0 +1,43 @@
+# type defines, SQL and java types
+types:
+  int:
+    SQL: NUMBER
+    Java: int
+  nameStr:
+    SQL: CHAR(80)
+    Java: String
+  addressStr:
+    SQL: VARCHAR(200)
+    Java: String
+  time:
+    SQL: TIMESTAMP
+    Java: long
+  # Definitions about the database structure (schema)
+database:
+  tables:
+    # keys here will be table names (downcase)
+    # The keys will also be the name of the java model class
+    Aluno:
+      rows:
+        # Use aliases to set the same type
+        NUSP: &ALUNO_NUSP int
+        Nome: nameStr
+        Endereco: addressStr
+      metadata:
+        # Required field PK
+        PK: NUSP
+        # Not Null rows
+        NN: Nome
+        Unique:
+          1: Nome
+    Matricula:
+      rows:
+        Aluno: *ALUNO_NUSP
+        Data: time
+      metadata:
+        PK: Aluno
+        FK:
+          from: Aluno # field name
+          to: Aluno   # Table name
+        NN: Data
+
