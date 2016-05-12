@@ -1,0 +1,24 @@
+<% tab.each do |table_name, table| %>
+	CREATE TABLE <%= table.name %> (
+		<% table.rows.each do |name, row| %>
+			<%= row.name %> <%= row.type.SQL %> 
+			<% if row.NN %>
+				NOT NULL
+			<% end %>
+			<% if row.default %>
+				DEFAULT <%= row.default %>
+			<% end %>
+			,
+		<% end %>
+		PRIMARY KEY ( <%= table.PK.join(", ") %> )
+		<% table.FK.each do |row| %>
+			,
+			<% foreign_table = table.rows[row].FK %>
+			FOREIGN KEY ( <%= row.to_s %> ) REFERENCES <%= foreign_table.to_s %> ( <%= tab[foreign_table].PK.join(", ") %> )
+		<% end %>
+		<% table.check.each do |check| %>
+			,
+			CHECK ( <%= check.to_s %> ) 
+		<% end %>
+	);
+<% end %>

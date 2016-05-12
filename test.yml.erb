@@ -1,7 +1,7 @@
 # type defines, SQL and java types
 types:
   int:
-    SQL: NUMBER
+    SQL: NUMERIC
     Java: int
   nameStr:
     SQL: CHAR(80)
@@ -37,7 +37,8 @@ database:
       metadata:
         PK: Aluno
         FK:
-          from: Aluno # field name
-          to: Aluno   # Table name
+          Aluno: Aluno
         NN: Data
-
+        check:
+          - Data > 10
+          - Data < 100
