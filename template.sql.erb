@@ -1,4 +1,5 @@
 <% tab.each do |table_name, table| %>
+------------------------------------
 	CREATE TABLE <%= table.name %> (
 		<% table.rows.each do |name, row| %>
 			<%= row.name %> <%= row.type.SQL %> 
@@ -19,6 +20,10 @@
 		<% table.check.each do |check| %>
 			,
 			CHECK ( <%= check.to_s %> ) 
+		<% end %>
+		<% table.unique.each do |key, val| %>
+			,
+			UNIQUE ( <%= val.join(", ") %> )
 		<% end %>
 	);
 <% end %>

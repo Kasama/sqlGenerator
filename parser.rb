@@ -59,13 +59,14 @@ class Row
 end
 
 class Table
-	attr_accessor :name, :rows, :PK, :FK, :check
-	def initialize(name, rows = {}, pk = [], fk = [], check = [])
+	attr_accessor :name, :rows, :PK, :FK, :check, :unique
+	def initialize(name, rows = {}, pk = [], fk = [], check = [], unique = {})
 		self.name = name
 		self.rows = rows
 		self.PK = a(pk)
 		self.FK = a(fk)
 		self.check = a(check)
+		self.unique = unique
 	end
 end
 
@@ -88,10 +89,14 @@ def normalize_config(config)
 		unless table.metadata.key?('PK')
 			raise NoPrimaryKeyError.new "Missing primary key on table #{table_name}"
 		end
+		table.metadata['PK'] = a(table.metadata.PK)
 		if table.metadata.key?('NN')
 			table.metadata['NN'] = a(table.metadata.NN)
 		end
 		if table.metadata.key?('Unique')
+			unless table.metadata.Unique.kind_of? (Hash)
+				table.metadata['Unique'] = { '1' => table.metadata.Unique }
+			end
 			table.metadata.Unique.each do |key, value|
 				table.metadata.Unique[key] = a(value)
 			end
@@ -122,8 +127,7 @@ tables.each do |table_name, table|
 		if table.metadata.key?('default')
 			default = table.metadata.default[row_name]
 		end
-
-		if table.metadata.PK == row_name
+		if table.metadata.PK.include? row_name
 			pk = true
 			tabb.PK << row_name
 		end
@@ -142,8 +146,8 @@ tables.each do |table_name, table|
 			tabb.rows[local].FK = foreign
 		end
 	end
+	tabb.unique = table.metadata.Unique if table.metadata.key?('Unique')
 	tab[tabb.name] = tabb
 end
-puts tab.inspect
 
 puts ERB.new(File.read('template.sql.erb').gsub(/^\s+/, ''), nil, '><%').result

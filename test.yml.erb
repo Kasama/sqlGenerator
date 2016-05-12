@@ -17,6 +17,7 @@ database:
   tables:
     # keys here will be table names (downcase)
     # The keys will also be the name of the java model class
+
     Aluno:
       rows:
         # Use aliases to set the same type
@@ -30,6 +31,7 @@ database:
         NN: Nome
         Unique:
           1: Nome
+
     Matricula:
       rows:
         Aluno: *ALUNO_NUSP
@@ -42,3 +44,30 @@ database:
         check:
           - Data > 10
           - Data < 100
+
+    Music:
+      rows:
+        Name: &MUSIC_NAME nameStr
+        Artist: &MUSIC_ARTIST nameStr
+        Year: int
+      metadata:
+        PK:
+          - Name
+          - Artist
+        Unique:
+          1:
+            - Name
+            - Artist
+
+    Nota:
+      rows:
+        Name: *MUSIC_NAME
+        Artist: *MUSIC_NAME
+        Nota: int
+      metadata:
+        PK:
+          - Name
+          - Artist
+        FK:
+          Name: Music
+          Artist: Music
