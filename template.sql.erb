@@ -1,5 +1,5 @@
 <% tab.each do |table_name, table| %>
-------------------------------------
+-- ----------------------------------
 	CREATE TABLE <%= table.name %> (
 		<% table.rows.each do |name, row| %>
 			<%= row.name %> <%= row.type.SQL %> 
@@ -12,10 +12,10 @@
 			,
 		<% end %>
 		PRIMARY KEY ( <%= table.PK.join(", ") %> )
-		<% table.FK.each do |row| %>
+		<% fks = find_fks(table) %>
+		<% fks.each do |foreign, rows| %>
 			,
-			<% foreign_table = table.rows[row].FK %>
-			FOREIGN KEY ( <%= row.to_s %> ) REFERENCES <%= foreign_table.to_s %> ( <%= tab[foreign_table].PK.join(", ") %> )
+			FOREIGN KEY ( <%= rows.join(", ") %> ) REFERENCES <%= foreign.to_s %> ( <%= tab[foreign].PK.join(", ") %> )
 		<% end %>
 		<% table.check.each do |check| %>
 			,
