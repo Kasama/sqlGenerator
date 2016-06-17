@@ -13,6 +13,7 @@ types:
     SQL: TIMESTAMP
     Java: long
   # Definitions about the database structure (schema)
+
 database:
   tables:
     # keys here will be table names (downcase)
@@ -29,8 +30,7 @@ database:
         PK: NUSP
         # Not Null rows
         NN: Nome
-        Unique:
-          1: Nome
+        Unique: Nome
 
     Matricula:
       rows:
@@ -55,9 +55,8 @@ database:
           - Name
           - Artist
         Unique:
-          1:
-            - Name
-            - Artist
+          - Name
+          - Artist
 
     Nota:
       rows:

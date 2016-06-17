@@ -6,8 +6,9 @@ require './config'
 require './errors'
 require './helpers'
 require './parser'
+require './types'
 
-config = Config.get('exercicio.yml.erb')
+config = Config.new(ENV['file'])
 
 tab = parse(config)
 

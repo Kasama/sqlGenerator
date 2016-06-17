@@ -19,8 +19,10 @@ module FK
 end
 
 def a(possibly_array)
-	if possibly_array.kind_of?(Array)
-		possibly_array
+	if possibly_array.nil?
+		[]
+	elsif possibly_array.respond_to?(:to_ary)
+		possibly_array.to_ary || [possibly_array]
 	else
 		[possibly_array]
 	end

@@ -2,7 +2,7 @@
 -- ----------------------------------
 	CREATE TABLE <%= table.name %> (
 		<% table.rows.each do |name, row| %>
-			<%= row.name %> <%= row.type.SQL %> 
+			<%= row.name %> <%= row.type.SQL %>
 			<% if row.NN %>
 				NOT NULL
 			<% end %>
@@ -19,7 +19,7 @@
 		<% end %>
 		<% table.check.each do |check| %>
 			,
-			CHECK ( <%= check.to_s %> ) 
+			CHECK ( <%= check.to_s %> )
 		<% end %>
 		<% table.unique.each do |key, val| %>
 			,

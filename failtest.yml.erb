@@ -1,0 +1,26 @@
+types:
+  INTEGER:
+    Java: Algomais
+    SQL: int
+  nao:
+    SQL: sim
+    Java: sim
+database:
+  tables:
+    olar:
+      rows:
+        jesus: &OLAR_JESUS INTEGER
+        sim: &OLAR_SIM nao
+      metadata:
+        PK: 
+          - sim
+          - jesus
+    bai:
+      rows:
+        olar: *OLAR_JESUS
+        zym: *OLAR_SIM
+      metadata:
+        PK: olar
+        FK:
+          olar: olar
+          zym: olar

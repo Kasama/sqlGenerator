@@ -11,9 +11,29 @@ fields = {
 	java: 'Java'
 }
 =end
+def perform_checks(config)
+=begin
+	begin config.types
+	rescue
+		raise	MissingMandatoryError, "missing mandatory key 'types'"
+	end
+=end
+	unless config.types
+		raise MissingMandatoryError, "missing mandatory key 'types'"
+	end
+	unless config.database
+		raise	MissingMandatoryError, "missing mandatory key 'database'"
+	end
+	unless config.database.tables
+		raise	MissingMandatoryError, "missing mandatory key 'tables' on 'database'"
+	end
+end
 
-def parse(config)
+def parse(c)
+	config = c.config
+	perform_checks(config)
 	types = config.types
+	types.extend(Types)
 	db = config.database
 	tables = db.tables
 	tab = {}
@@ -42,15 +62,15 @@ def parse(config)
 					pk, fk, nn, default
 			)
 		end
-		if table.metadata.key?('check')
-			tabb.check = table.metadata.check
+		if table.metadata.key?('Check')
+			tabb.check = table.metadata.Check
 		end
 		if table.metadata.key?('FK')
-			table.metadata.FK.each do |name, fk|
-				fk.each do |local, foreign|
-					tabb.FK << local
-					tabb.rows[local].FK = foreign
-				end
+			table.metadata.FK.each do |local, foreign|
+				raise MissingMandatoryError, "#{local} is not an attribute of table #{tabb.name}" unless table.rows.key? local
+				raise MissingMandatoryError, "foreign table #{foreign} does not exist" unless tab.key? foreign
+				tabb.FK << local
+				tabb.rows[local].FK = foreign
 			end
 		end
 		tabb.unique = table.metadata.Unique if table.metadata.key?('Unique')

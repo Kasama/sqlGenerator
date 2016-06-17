@@ -1,0 +1,87 @@
+types:
+  int:
+    SQL: NUMERIC
+    Java: int
+  float:
+    SQL: NUMERIC
+    Java: float
+  str40:
+    SQL: VARCHAR(40)
+    Java: String
+  str100:
+    SQL: VARCHAR(100)
+    Java: String
+  sigla:
+    SQL: CHAR(7)
+    Java: String
+  date:
+    SQL: TIMESTAMP
+    Java: long
+
+database:
+  tables:
+    Aluno:
+      rows:
+        NUSP: &ALUNO_NUSP int
+        CPF: int
+        RG: int
+        Nome: str40
+        DataNasc: date
+      metadata:
+        PK: NUSP
+        Unique:
+          - CPF
+          - RG
+        NN: Nome
+
+    Professor:
+      rows:
+        Nome: str40
+        NFUNC: &PROF_NFUNC int
+        Titulacao: str100
+      metadata:
+        PK: NFUNC
+        NN: Nome
+
+    Diciplina:
+      rows:
+        Sigla: &DICI_SIGLA sigla
+        Nome: str40
+        NCred: int
+        Professor: *PROF_NFUNC
+      metadata:
+        PK: Sigla
+        FK:
+          Professor: Professor
+
+    Turma:
+      rows:
+        Sigla: *DICI_SIGLA
+        Numero: &TURMA_NUMERO int
+        NAlunos: int
+      metadata:
+        PK:
+          - Sigla
+          - Numero
+        FK:
+          Sigla: Diciplina
+
+    Matricula:
+      rows:
+        Sigla: *DICI_SIGLA
+        Numero: *TURMA_NUMERO
+        Aluno: *ALUNO_NUSP
+        Ano: int
+        Nota: float
+      metadata:
+        PK:
+          - Sigla
+          - Numero
+          - Aluno
+          - Ano
+        FK:
+          Aluno:
+            Aluno: Aluno
+          Turma:
+            Sigla: Turma
+            Numero: Turma

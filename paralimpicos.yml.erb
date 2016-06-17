@@ -1,0 +1,214 @@
+types:
+  number:
+    SQL: NUMBER 
+    Java: int
+  vchar_20:
+    SQL: VARCHAR(20) 
+    Java: String
+  vchar_40:
+    SQL: VARCHAR(40) 
+    Java: String
+  vchar_80:
+    SQL: VARCHAR(80) 
+    Java: String
+  vchar_200:
+    SQL: VARCHAR(200) 
+    Java: String
+  char_2:
+    SQL: CHAR(2) 
+    Java: String
+  timestamp:
+    SQL: NUMBER 
+    Java: Date
+  time_duration:
+    SQL: NUMBER 
+    Java: Date
+
+database:
+  tables:
+    PontoVenda:
+      rows:
+        Identificador: &PONTO_VENDA_ID number
+        QtdIngressos: number
+        Tipo: vchar_40
+        URL: vchar_200
+        Endereco: vchar_200
+        Horario: timestamp
+      metadata:
+        PK: Identificador
+        NN:
+          - QtdIngressos
+          - Tipo
+        Check:
+          - UPPER(Tipo) IN ('VIRTUAL', 'REAL')
+          - QtdIngressos >= 0
+
+    Local:
+      rows:
+        Nome: &LOCAL_NOME vchar_80
+        Capacidade: number
+        Endereco: vchar_200
+      metadata:
+        PK: Nome
+        NN:
+          - Capacidade
+          - Endereco
+        Check:
+          - Capacidade >= 0
+
+    Modalidade:
+      rows:
+        Nome: &MODALIDADE_NOME vchar_40
+        Nequipes: number
+      metadata:
+        PK: Nome
+        NN: Nequipes
+        Check:
+          - Nequipes >= 0
+
+    Pais:
+      rows:
+        Sigla: &PAIS_SIGLA char_2
+        Nome: vchar_80
+        Hino: vchar_200 #link para o hino
+        Bandeira: vchar_200 #link para a imagem
+        Colocacao: number
+        Ouros: number
+        Pratas: number
+        Bronzes: number
+      metadata:
+        PK: Sigla
+        Unique:
+          - Nome
+          - Hino
+          - Bandeira
+        NN:
+          - Bandeira
+          - Ouros
+          - Pratas
+          - Bronzes
+        Check:
+          - Ouros >= 0
+          - Pratas >= 0
+          - Bronzes >= 0
+          - Colocacao >= 0
+
+    Venda:
+      rows:
+        NF: &INGRESSO_NF number
+        DataHora: timestamp
+        NomeCliente: vchar_40
+        IDCliente: number
+        PontoVenda: *PONTO_VENDA_ID
+      metadata:
+        PK: NF
+        NN:
+          - DataHora
+          - NomeCliente
+          - IDCliente
+          - PontoVenda
+        FK:
+          PontoVenda: PontoVenda
+
+    Jogos: #TODO: Fix id problem
+      rows:
+        ID: &JOGO_ID number
+        Pais: *PAIS_SIGLA
+        Modalidade: *MODALIDADE_NOME
+        Colocacao: number
+        Pontuacao: number
+      metadata:
+        PK:
+          - ID
+          - Pais
+          - Modalidade
+        NN:
+          - Colocacao
+          - Pontuacao
+        Check:
+          - Colocacao >= 0
+          - Pontuacao >= 0
+
+    Partida:
+      rows:
+        DataHora: &PARTIDA_DATA timestamp
+        Jogo: *JOGO_ID
+        Local: *LOCAL_NOME
+        Ingressos: number
+        Duracao: time_duration
+        IngressosVendidos: number
+      metadata:
+        PK:
+          - DataHora
+          - Jogo
+          - Local
+        NN: IngressosVendidos
+        FK:
+          Jogo: Jogos
+          Local: Local
+        Check:
+          - Ingressos >= 0
+          - Duracao >= 0
+
+    Ingresso:
+      rows:
+        Data: *PARTIDA_DATA
+        IDPartida: *JOGO_ID
+        LocalPartida: *LOCAL_NOME
+        NIngresso: number
+        NotaDaVenda: *INGRESSO_NF
+      metadata:
+        PK:
+          - Data
+          - IDPartida
+          - LocalPartida
+          - NIngresso
+        FK:
+          Data: Partida
+          IDPartida: Partida
+          LocalPartida: Partida
+          NotaDaVenda: Venda
+
+    Equipe:
+      rows:
+        Pais: *PAIS_SIGLA
+        Modalidade: *MODALIDADE_NOME
+        NumeroInscricao: number
+        NomeTreinador: vchar_80
+        NumeroAtletas: number
+        Colocacao: number
+      metadata:
+        PK:
+          - Pais
+          - Modalidade
+          - NumeroInscricao
+        NN:
+          - NumeroAtletas
+          - Colocacao
+        FK:
+          Pais: Pais
+          Modalidade: Modalidade
+        Check:
+          - NumeroAtletas >= 0
+          - Colocacao >= 0
+
+    QuadroMedalhas: # TODO: Fix Relational diagram
+      rows:
+        DataHora: timestamp
+        Pais: *PAIS_SIGLA
+        Medalha: vchar_20
+        Modalidade: *MODALIDADE_NOME
+        Quantidade: number
+      metadata:
+        PK:
+          - DataHora
+          - Pais
+          - Medalha
+          - Modalidade
+        FK:
+          Pais: Pais
+          Modalidade: Modalidade
+        NN: Quantidade
+        Check:
+          - Quantidade >= 0
+
