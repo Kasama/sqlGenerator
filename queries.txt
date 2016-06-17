@@ -1,0 +1,6 @@
+- nome do pais, colocação e medalhas ordenado por tipo de medalha  = FRED
+- Pontuação de cada jogo de cada país  = BRUNO
+- nome de todos os locais que um país participou  = BRUNO
+- o nome, endereço e quantidade de ingressos vendidos para uma determinada partida  = FRED
+- porcentagem de ingressos vendidos por ponto de venda  = ROBERTO
+- Nome de todos os atletas participantes de uma modalidade  = ROBERTO
