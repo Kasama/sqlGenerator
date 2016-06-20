@@ -1,5 +1,6 @@
 require 'yaml'
 require 'erb'
+require 'fileutils'
 require './overloads'
 require './table'
 require './config'
@@ -13,7 +14,8 @@ def erbfy(filename, erb_params)
 end
 
 if ARGV.size != 3
-	STDERR.puts "Usage: ${$0} <schema.yml.erb> <output_folder> <java_package>"
+	STDERR.puts "Usage: #{$0} <schema.yml.erb> <output_folder> <java_package>"
+	exit 1
 end
 
 config = Config.new(ARGV[0])
@@ -31,8 +33,10 @@ puts "Done"
 tab.each do |table_name, table|
 	current_java = "#{capitalize(table_name)}.java"
 	print "Creating file #{current_java}..."
-	File.open("#{output_folder}/#{current_java}", "w+") do |f|
-		params = {table: table, package: ARGV[2]}
+	params = {table: table, package: ARGV[2]}
+	dir = "#{output_folder}/#{params[:package].split('.').join('/')}"
+	FileUtils.mkdir_p dir
+	File.open("#{dir}/#{current_java}", "w+") do |f|
 		f.write(erbfy('template.java.erb', params))
 	end
 	puts "Done"
