@@ -23,6 +23,7 @@ config = Config.new(ARGV[0])
 tab = parse(config)
 
 output_folder = ARGV[1]
+FileUtils.mkdir_p output_folder
 sql_name = 'schema.sql'
 print "Creating file #{sql_name}..."
 File.open("#{output_folder}/#{sql_name}", "w+") do |f|
