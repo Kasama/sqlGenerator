@@ -1,12 +1,49 @@
-public abstract class <%= @class_name %> {
+package <%= erb_params[:package] %>.sql;
+import java.util.*;
+import java.util.Date;
+import java.sql.*;
+<% table = erb_params[:table] %>
+public class <%= capitalize(table.name) %> {
+	<% row_names = {} %>
+	<% table.rows.each do |row_name, row| %>
+	<% name = lower(row.name) %>
+	public static final String ROW_<%= name.to_s %> = "<%= name.to_s %>";
+	private <%= row.type.Java %> <%= name.to_s %>;
+	<% row_names[name] =  row.type.Java %>
+	<% end %>
 
-	private <%= @varType %> <%= @varName %>;
-
-	// Constructor
-	<%= @class_name %>() { }
-
-	public void test(String str){
-		System.out.println(str);
+	<% arguments = row_names.reduce do |mem, entry|
+		mem = mem.reverse.join(' ') if mem.respond_to? 'join'
+		[mem, entry.reverse.join(' ')].join(', ')
+	end %>
+	private <%= capitalize(table.name) %>(<%= arguments.to_s %>){
+	<% row_names.each do |name, type| %>
+		this.<%= name.to_s %> = <%= name.to_s %>;
+	<% end %>
 	}
 
+	<% row_names.each do |name, type| %>
+			public <%= type.to_s %> get<%= capitalize(name) %>() {
+				return this.<%= name.to_s %>;
+			}
+	<% end %>
+
+	private static <%= capitalize(table.name) %> populate_priv(ResultSet rs) throws SQLException {
+		<% row_names.each do |name, type| %>
+			<%= type.to_s %> <%= name.to_s %> = rs.get<%= capitalize(type) %>("<%= name.to_s %>");
+		<% end %>
+		return new <%= capitalize(table.name) %>( <%= row_names.keys.join(", ") %>);
+	}
+	public static <%= capitalize(table.name) %> populate(ResultSet rs) {
+		<%= capitalize(table.name) %> ret = null;
+		try{
+			ret = populate_priv(rs);
+		}catch(SQLException e){
+			System.err.println("There was a problem with the generated source!");
+			e.printStackTrace();
+			System.exit(1);
+		}
+		return ret;
+	}
 }
+

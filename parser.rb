@@ -49,8 +49,8 @@ def parse(c)
 					table.metadata.NN.include?(row_name))
 				nn = true
 			end
-			if table.metadata.key?('default')
-				default = table.metadata.default[row_name]
+			if table.metadata.key?('Default')
+				default = table.metadata.Default[row_name]
 			end
 			if table.metadata.PK.include? row_name
 				pk = true

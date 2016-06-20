@@ -102,7 +102,7 @@ class Config
 		##### If Unique exist, ASSERT valid attributes
 		table.metadata.Unique.each do |_, values|
 			values.each do |attr|
-				assert(table.rows.key?(attr), E_UNIQUE)
+				assert(table.rows.key?(attr), E_UNIQUE % [attr, table_name])
 			end
 		end
 	end
@@ -112,16 +112,16 @@ class Config
 		table.metadata['NN'] = a(table.metadata.NN)
 		table.metadata.NN.each do |attr|
 			##### If NN exist, ASSERT valid attributes
-			assert(table.rows.key?(attr), E_NN)
+			assert(table.rows.key?(attr), E_NN % [attr, table_name])
 		end
 	end
 
-	def assert_default(config)
+	def assert_Default(table_name, table)
 		#---- Normalize Default
-		table.metadata['Default'] = a(table.metadata.Default)
+		#table.metadata['Default'] = a(table.metadata.Default)
 		table.metadata.Default.each do |attr, value|
 			##### If Default exist, ASSERT valid attribute
-			assert(table.rows.key?(attr), E_DEFAULT)
+			assert(table.rows.key?(attr), E_DEFAULT % [attr, table_name])
 		end
 	end
 end

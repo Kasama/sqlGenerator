@@ -1,29 +1,30 @@
+<% tab = erb_params %>
 <% tab.each do |table_name, table| %>
 -- ----------------------------------
 	CREATE TABLE <%= table.name %> (
 		<% table.rows.each do |name, row| %>
-			<%= row.name %> <%= row.type.SQL %>
+			<%= row.name %> <%= row.type.SQL %> 
 			<% if row.NN %>
-				NOT NULL
+				NOT NULL 
 			<% end %>
 			<% if row.default %>
-				DEFAULT <%= row.default %>
+				DEFAULT <%= row.default %> 
 			<% end %>
 			,
 		<% end %>
-		PRIMARY KEY ( <%= table.PK.join(", ") %> )
+		PRIMARY KEY ( <%= table.PK.join(", ") %> ) 
 		<% fks = find_fks(table) %>
 		<% fks.each do |foreign, rows| %>
 			,
-			FOREIGN KEY ( <%= rows.join(", ") %> ) REFERENCES <%= foreign.to_s %> ( <%= tab[foreign].PK.join(", ") %> )
+			FOREIGN KEY ( <%= rows.join(", ") %> ) REFERENCES <%= foreign.to_s %> ( <%= tab[foreign].PK.join(", ") %> ) 
 		<% end %>
 		<% table.check.each do |check| %>
 			,
-			CHECK ( <%= check.to_s %> )
+			CHECK ( <%= check.to_s %> ) 
 		<% end %>
 		<% table.unique.each do |key, val| %>
 			,
-			UNIQUE ( <%= val.join(", ") %> )
+			UNIQUE ( <%= val.join(", ") %> ) 
 		<% end %>
 	);
 <% end %>

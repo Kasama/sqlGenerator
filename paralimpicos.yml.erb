@@ -1,27 +1,27 @@
 types:
   number:
-    SQL: NUMBER 
+    SQL: NUMERIC
     Java: int
   vchar_20:
-    SQL: VARCHAR(20) 
+    SQL: VARCHAR(20)
     Java: String
   vchar_40:
-    SQL: VARCHAR(40) 
+    SQL: VARCHAR(40)
     Java: String
   vchar_80:
-    SQL: VARCHAR(80) 
+    SQL: VARCHAR(80)
     Java: String
   vchar_200:
-    SQL: VARCHAR(200) 
+    SQL: VARCHAR(200)
     Java: String
   char_2:
-    SQL: CHAR(2) 
+    SQL: CHAR(2)
     Java: String
   timestamp:
-    SQL: NUMBER 
+    SQL: NUMERIC
     Java: Date
   time_duration:
-    SQL: NUMBER 
+    SQL: NUMERIC
     Java: Date
 
 database:
@@ -110,21 +110,53 @@ database:
         FK:
           PontoVenda: PontoVenda
 
-    Jogos: #TODO: Fix id problem
+    Equipe:
+      rows:
+        Pais: *PAIS_SIGLA
+        Modalidade: *MODALIDADE_NOME
+        NumeroInscricao: &EQUIPE_INSCRICAO number
+        NomeTreinador: vchar_80
+        NumeroAtletas: number
+        Colocacao: number
+      metadata:
+        PK:
+          - Pais
+          - Modalidade
+          - NumeroInscricao
+        NN:
+          - NumeroAtletas
+          - Colocacao
+        Default:
+          NumeroAtletas: 0
+          Colocacao: 0
+        FK:
+          Pais: Pais
+          Modalidade: Modalidade
+        Check:
+          - NumeroAtletas >= 0
+          - Colocacao >= 0
+
+    Jogos:
       rows:
         ID: &JOGO_ID number
         Pais: *PAIS_SIGLA
         Modalidade: *MODALIDADE_NOME
+        Inscricao: *EQUIPE_INSCRICAO
         Colocacao: number
         Pontuacao: number
       metadata:
         PK:
           - ID
+        Unique:
           - Pais
           - Modalidade
+          - Inscricao
         NN:
           - Colocacao
           - Pontuacao
+        Default:
+          Colocacao: 0
+          Pontuacao: 0
         Check:
           - Colocacao >= 0
           - Pontuacao >= 0
@@ -169,46 +201,32 @@ database:
           LocalPartida: Partida
           NotaDaVenda: Venda
 
-    Equipe:
-      rows:
-        Pais: *PAIS_SIGLA
-        Modalidade: *MODALIDADE_NOME
-        NumeroInscricao: number
-        NomeTreinador: vchar_80
-        NumeroAtletas: number
-        Colocacao: number
-      metadata:
-        PK:
-          - Pais
-          - Modalidade
-          - NumeroInscricao
-        NN:
-          - NumeroAtletas
-          - Colocacao
-        FK:
-          Pais: Pais
-          Modalidade: Modalidade
-        Check:
-          - NumeroAtletas >= 0
-          - Colocacao >= 0
-
-    QuadroMedalhas: # TODO: Fix Relational diagram
+    QuadroMedalhas:
       rows:
         DataHora: timestamp
         Pais: *PAIS_SIGLA
-        Medalha: vchar_20
-        Modalidade: *MODALIDADE_NOME
-        Quantidade: number
+        Ouro: number
+        Prata: number
+        Bronze: number
+        Classificacao: number
       metadata:
         PK:
           - DataHora
           - Pais
-          - Medalha
-          - Modalidade
         FK:
           Pais: Pais
-          Modalidade: Modalidade
-        NN: Quantidade
+        NN:
+          - Ouro
+          - Prata
+          - Bronze
+          - Classificacao
+        Default:
+          Ouro: 0
+          Prata: 0
+          Bronze: 0
+          Classificacao: 0
         Check:
-          - Quantidade >= 0
-
+          - Ouro >= 0
+          - Prata >= 0
+          - Bronze >= 0
+          - Classificacao >= 0

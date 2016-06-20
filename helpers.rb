@@ -8,6 +8,17 @@ def find_fks(table)
 	fks
 end
 
+def lower(str)
+	str.to_s.downcase
+end
+
+def capitalize(str)
+	str = lower(str)
+	str = str.chars
+	str[0] = str[0].upcase
+	str.join ''
+end
+
 module FK
 	def addFK(foreign, row)
 		if self[foreign].kind_of?(Array)
