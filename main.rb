@@ -13,10 +13,14 @@ def erbfy(filename, erb_params)
 	ERB.new(File.read(filename).gsub(/^\s+/, ''), nil, '><%').result binding
 end
 
-if ARGV.size != 3
-	STDERR.puts "Usage: #{$0} <schema.yml.erb> <output_folder> <java_package>"
+if ARGV.size != 2
+	STDERR.puts "Usage: #{$0} <schema.yml.erb> <output_folder>"
 	exit 1
 end
+#if ARGV.size != 3
+#	STDERR.puts "Usage: #{$0} <schema.yml.erb> <output_folder> <java_package>"
+#	exit 1
+#end
 
 config = Config.new(ARGV[0])
 
@@ -31,6 +35,7 @@ File.open("#{output_folder}/#{sql_name}", "w+") do |f|
 end
 puts "Done"
 
+=begin
 tab.each do |table_name, table|
 	current_java = "#{capitalize(table_name)}.java"
 	print "Creating file #{current_java}..."
@@ -42,4 +47,4 @@ tab.each do |table_name, table|
 	end
 	puts "Done"
 end
-
+=end
